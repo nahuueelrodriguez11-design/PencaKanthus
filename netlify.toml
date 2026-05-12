@@ -4,20 +4,3 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
-
-[build.environment]
-  NODE_VERSION = "20"
-  NEXT_PRIVATE_TARGET = "server"
-
-# Headers para CORS y seguridad
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-
-# Cache estático para assets
-[[headers]]
-  for = "/_next/static/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
