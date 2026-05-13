@@ -1,205 +1,150 @@
-import { db } from "@/db";
-import { matches, users } from "@/db/schema";
-import { count, eq, or } from "drizzle-orm";
+-- ========================================================================================
+-- SCRIPT SQL DE SIEMBRA COMPLETA: FIXTURE OFICIAL MUNDIAL 2026 (104 PARTIDOS)
+-- Penca Mundial Kanthus - Kanthus Smash Club
+-- 
+-- IMPORTANTE: Pega y ejecuta este script directamente en la pestaña "SQL Editor" de tu 
+-- consola en Neon.tech para insertar/actualizar la tabla public.matches real.
+-- ========================================================================================
 
-export async function ensureSeedData() {
-  try {
-    // 1. LIMPIEZA FORZOSA DE CUALQUIER VERSIÓN CACHEADA O VIEJOS PLACEHOLDERS DE LA BASE DE DATOS NEON
-    await db.delete(matches).where(
-      or(
-        eq(matches.equipoA, "2A"),
-        eq(matches.equipoA, "1E"),
-        eq(matches.equipoA, "Ganador M73"),
-        eq(matches.equipoA, "Ganador M89"),
-        eq(matches.equipoA, "Ganador M97"),
-        eq(matches.equipoA, "Ganador M101")
-      )
-    );
+TRUNCATE TABLE public.matches CASCADE;
 
-    // 2. VERIFICAMOS SI EL FIXTURE EXACTO DEL MUNDIAL 2026 YA ESTÁ CARGADO
-    // Buscamos el partido inaugural del Grupo A (México vs Sudáfrica)
-    const checkExist = await db.select().from(matches).where(eq(matches.equipoA, "México"));
-    
-    if (checkExist.length === 0) {
-      console.log("Limpiando fixture anterior e insertando el fixture completo oficial del Mundial 2026...");
-      
-      // Borramos todos los partidos anteriores para no dejar cruces viejos ni duplicados
-      await db.delete(matches);
+INSERT INTO public.matches (equipo_a, equipo_b, bandera_a, bandera_b, fecha_hora, ronda, started, finished) VALUES
+-- GRUPO A
+('México', 'Sudáfrica', '🇲🇽', '🇿🇦', '2026-06-11 16:00:00', 'Grupo A', false, false),
+('Corea del Sur', 'Chequia', '🇰🇷', '🇨🇿', '2026-06-11 23:00:00', 'Grupo A', false, false),
+('Chequia', 'Sudáfrica', '🇨🇿', '🇿🇦', '2026-06-18 13:00:00', 'Grupo A', false, false),
+('México', 'Corea del Sur', '🇲🇽', '🇰🇷', '2026-06-18 22:00:00', 'Grupo A', false, false),
+('Sudáfrica', 'Corea del Sur', '🇿🇦', '🇰🇷', '2026-06-24 22:00:00', 'Grupo A', false, false),
+('Chequia', 'México', '🇨🇿', '🇲🇽', '2026-06-24 22:00:00', 'Grupo A', false, false),
 
-      // Listado exacto de los 96 partidos con sus respectivas banderas, fechas y rondas
-      await db.insert(matches).values([
-        // --- GRUPO A ---
-        { equipoA: "México", equipoB: "Sudáfrica", banderaA: "🇲🇽", banderaB: "🇿🇦", fechaHora: new Date("2026-06-11T16:00:00"), ronda: "Grupo A", started: false, finished: false },
-        { equipoA: "Corea del Sur", equipoB: "Chequia", banderaA: "🇰🇷", banderaB: "🇨🇿", fechaHora: new Date("2026-06-11T23:00:00"), ronda: "Grupo A", started: false, finished: false },
-        { equipoA: "Chequia", equipoB: "Sudáfrica", banderaA: "🇨🇿", banderaB: "🇿🇦", fechaHora: new Date("2026-06-18T13:00:00"), ronda: "Grupo A", started: false, finished: false },
-        { equipoA: "México", equipoB: "Corea del Sur", banderaA: "🇲🇽", banderaB: "🇰🇷", fechaHora: new Date("2026-06-18T22:00:00"), ronda: "Grupo A", started: false, finished: false },
-        { equipoA: "Sudáfrica", equipoB: "Corea del Sur", banderaA: "🇿🇦", banderaB: "🇰🇷", fechaHora: new Date("2026-06-24T22:00:00"), ronda: "Grupo A", started: false, finished: false },
-        { equipoA: "Chequia", equipoB: "México", banderaA: "🇨🇿", banderaB: "🇲🇽", fechaHora: new Date("2026-06-24T22:00:00"), ronda: "Grupo A", started: false, finished: false },
+-- GRUPO B
+('Canadá', 'Bosnia y Herzegovina', '🇨🇦', '🇧🇦', '2026-06-12 16:00:00', 'Grupo B', false, false),
+('Catar', 'Suiza', '🇶🇦', '🇨🇭', '2026-06-13 16:00:00', 'Grupo B', false, false),
+('Suiza', 'Bosnia y Herzegovina', '🇨🇭', '🇧🇦', '2026-06-18 16:00:00', 'Grupo B', false, false),
+('Canadá', 'Catar', '🇨🇦', '🇶🇦', '2026-06-18 19:00:00', 'Grupo B', false, false),
+('Suiza', 'Canadá', '🇨🇭', '🇨🇦', '2026-06-24 16:00:00', 'Grupo B', false, false),
+('Bosnia y Herzegovina', 'Catar', '🇧🇦', '🇶🇦', '2026-06-24 16:00:00', 'Grupo B', false, false),
 
-        // --- GRUPO B ---
-        { equipoA: "Canadá", equipoB: "Bosnia y Herzegovina", banderaA: "🇨🇦", banderaB: "🇧🇦", fechaHora: new Date("2026-06-12T16:00:00"), ronda: "Grupo B", started: false, finished: false },
-        { equipoA: "Catar", equipoB: "Suiza", banderaA: "🇶🇦", banderaB: "🇨🇭", fechaHora: new Date("2026-06-13T16:00:00"), ronda: "Grupo B", started: false, finished: false },
-        { equipoA: "Suiza", equipoB: "Bosnia y Herzegovina", banderaA: "🇨🇭", banderaB: "🇧🇦", fechaHora: new Date("2026-06-18T16:00:00"), ronda: "Grupo B", started: false, finished: false },
-        { equipoA: "Canadá", equipoB: "Catar", banderaA: "🇨🇦", banderaB: "🇶🇦", fechaHora: new Date("2026-06-18T19:00:00"), ronda: "Grupo B", started: false, finished: false },
-        { equipoA: "Suiza", equipoB: "Canadá", banderaA: "🇨🇭", banderaB: "🇨🇦", fechaHora: new Date("2026-06-24T16:00:00"), ronda: "Grupo B", started: false, finished: false },
-        { equipoA: "Bosnia y Herzegovina", equipoB: "Catar", banderaA: "🇧🇦", banderaB: "🇶🇦", fechaHora: new Date("2026-06-24T16:00:00"), ronda: "Grupo B", started: false, finished: false },
+-- GRUPO C
+('Brasil', 'Marruecos', '🇧🇷', '🇲🇦', '2026-06-13 19:00:00', 'Grupo C', false, false),
+('Haití', 'Escocia', '🇭🇹', '🏴󠁧󠁢󠁳󠁣󠁴󠁿', '2026-06-13 22:00:00', 'Grupo C', false, false),
+('Escocia', 'Marruecos', '🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🇲🇦', '2026-06-19 19:00:00', 'Grupo C', false, false),
+('Brasil', 'Haití', '🇧🇷', '🇭🇹', '2026-06-19 21:30:00', 'Grupo C', false, false),
+('Marruecos', 'Haití', '🇲🇦', '🇭🇹', '2026-06-24 19:00:00', 'Grupo C', false, false),
+('Escocia', 'Brasil', '🏴󠁧󠁢󠁳󠁣󠁴󠁿', '🇧🇷', '2026-06-24 19:00:00', 'Grupo C', false, false),
 
-        // --- GRUPO C ---
-        { equipoA: "Brasil", equipoB: "Marruecos", banderaA: "🇧🇷", banderaB: "🇲🇦", fechaHora: new Date("2026-06-13T19:00:00"), ronda: "Grupo C", started: false, finished: false },
-        { equipoA: "Haití", equipoB: "Escocia", banderaA: "🇭🇹", banderaB: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", fechaHora: new Date("2026-06-13T22:00:00"), ronda: "Grupo C", started: false, finished: false },
-        { equipoA: "Escocia", equipoB: "Marruecos", banderaA: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", banderaB: "🇲🇦", fechaHora: new Date("2026-06-19T19:00:00"), ronda: "Grupo C", started: false, finished: false },
-        { equipoA: "Brasil", equipoB: "Haití", banderaA: "🇧🇷", banderaB: "🇭🇹", fechaHora: new Date("2026-06-19T21:30:00"), ronda: "Grupo C", started: false, finished: false },
-        { equipoA: "Marruecos", equipoB: "Haití", banderaA: "🇲🇦", banderaB: "🇭🇹", fechaHora: new Date("2026-06-24T19:00:00"), ronda: "Grupo C", started: false, finished: false },
-        { equipoA: "Escocia", equipoB: "Brasil", banderaA: "🏴󠁧󠁢󠁳󠁣󠁴󠁿", banderaB: "🇧🇷", fechaHora: new Date("2026-06-24T19:00:00"), ronda: "Grupo C", started: false, finished: false },
+-- GRUPO D
+('Estados Unidos', 'Paraguay', '🇺🇸', '🇵🇾', '2026-06-12 22:00:00', 'Grupo D', false, false),
+('Australia', 'Turquía', '🇦🇺', '🇹🇷', '2026-06-14 01:00:00', 'Grupo D', false, false),
+('Estados Unidos', 'Australia', '🇺🇸', '🇦🇺', '2026-06-19 16:00:00', 'Grupo D', false, false),
+('Turquía', 'Paraguay', '🇹🇷', '🇵🇾', '2026-06-20 00:00:00', 'Grupo D', false, false),
+('Turquía', 'Estados Unidos', '🇹🇷', '🇺🇸', '2026-06-25 23:00:00', 'Grupo D', false, false),
+('Paraguay', 'Australia', '🇵🇾', '🇦🇺', '2026-06-25 23:00:00', 'Grupo D', false, false),
 
-        // --- GRUPO D ---
-        { equipoA: "Estados Unidos", equipoB: "Paraguay", banderaA: "🇺🇸", banderaB: "🇵🇾", fechaHora: new Date("2026-06-12T22:00:00"), ronda: "Grupo D", started: false, finished: false },
-        { equipoA: "Australia", equipoB: "Turquía", banderaA: "🇦🇺", banderaB: "🇹🇷", fechaHora: new Date("2026-06-14T01:00:00"), ronda: "Grupo D", started: false, finished: false },
-        { equipoA: "Estados Unidos", equipoB: "Australia", banderaA: "🇺🇸", banderaB: "🇦🇺", fechaHora: new Date("2026-06-19T16:00:00"), ronda: "Grupo D", started: false, finished: false },
-        { equipoA: "Turquía", equipoB: "Paraguay", banderaA: "🇹🇷", banderaB: "🇵🇾", fechaHora: new Date("2026-06-20T00:00:00"), ronda: "Grupo D", started: false, finished: false },
-        { equipoA: "Turquía", equipoB: "Estados Unidos", banderaA: "🇹🇷", banderaB: "🇺🇸", fechaHora: new Date("2026-06-25T23:00:00"), ronda: "Grupo D", started: false, finished: false },
-        { equipoA: "Paraguay", equipoB: "Australia", banderaA: "🇵🇾", banderaB: "🇦🇺", fechaHora: new Date("2026-06-25T23:00:00"), ronda: "Grupo D", started: false, finished: false },
+-- GRUPO E
+('Alemania', 'Curazao', '🇩🇪', '🇨🇼', '2026-06-14 14:00:00', 'Grupo E', false, false),
+('Costa de Marfil', 'Ecuador', '🇨🇮', '🇪🇨', '2026-06-14 20:00:00', 'Grupo E', false, false),
+('Alemania', 'Costa de Marfil', '🇩🇪', '🇨🇮', '2026-06-20 17:00:00', 'Grupo E', false, false),
+('Ecuador', 'Curazao', '🇪🇨', '🇨🇼', '2026-06-20 21:00:00', 'Grupo E', false, false),
+('Curazao', 'Costa de Marfil', '🇨🇼', '🇨🇮', '2026-06-25 17:00:00', 'Grupo E', false, false),
+('Ecuador', 'Alemania', '🇪🇨', '🇩🇪', '2026-06-25 17:00:00', 'Grupo E', false, false),
 
-        // --- GRUPO E ---
-        { equipoA: "Alemania", equipoB: "Curazao", banderaA: "🇩🇪", banderaB: "🇨🇼", fechaHora: new Date("2026-06-14T14:00:00"), ronda: "Grupo E", started: false, finished: false },
-        { equipoA: "Costa de Marfil", equipoB: "Ecuador", banderaA: "🇨🇮", banderaB: "🇪🇨", fechaHora: new Date("2026-06-14T20:00:00"), ronda: "Grupo E", started: false, finished: false },
-        { equipoA: "Alemania", equipoB: "Costa de Marfil", banderaA: "🇩🇪", banderaB: "🇨🇮", fechaHora: new Date("2026-06-20T17:00:00"), ronda: "Grupo E", started: false, finished: false },
-        { equipoA: "Ecuador", equipoB: "Curazao", banderaA: "🇪🇨", banderaB: "🇨🇼", fechaHora: new Date("2026-06-20T21:00:00"), ronda: "Grupo E", started: false, finished: false },
-        { equipoA: "Curazao", equipoB: "Costa de Marfil", banderaA: "🇨🇼", banderaB: "🇨🇮", fechaHora: new Date("2026-06-25T17:00:00"), ronda: "Grupo E", started: false, finished: false },
-        { equipoA: "Ecuador", equipoB: "Alemania", banderaA: "🇪🇨", banderaB: "🇩🇪", fechaHora: new Date("2026-06-25T17:00:00"), ronda: "Grupo E", started: false, finished: false },
+-- GRUPO F
+('Países Bajos', 'Japón', '🇳🇱', '🇯🇵', '2026-06-14 17:00:00', 'Grupo F', false, false),
+('Suecia', 'Túnez', '🇸🇪', '🇹🇳', '2026-06-14 23:00:00', 'Grupo F', false, false),
+('Países Bajos', 'Suecia', '🇳🇱', '🇸🇪', '2026-06-20 14:00:00', 'Grupo F', false, false),
+('Túnez', 'Japón', '🇹🇳', '🇯🇵', '2026-06-21 01:00:00', 'Grupo F', false, false),
+('Túnez', 'Países Bajos', '🇹🇳', '🇳🇱', '2026-06-25 20:00:00', 'Grupo F', false, false),
+('Japón', 'Suecia', '🇯🇵', '🇸🇪', '2026-06-25 20:00:00', 'Grupo F', false, false),
 
-        // --- GRUPO F ---
-        { equipoA: "Países Bajos", equipoB: "Japón", banderaA: "🇳🇱", banderaB: "🇯🇵", fechaHora: new Date("2026-06-14T17:00:00"), ronda: "Grupo F", started: false, finished: false },
-        { equipoA: "Suecia", equipoB: "Túnez", banderaA: "🇸🇪", banderaB: "🇹🇳", fechaHora: new Date("2026-06-14T23:00:00"), ronda: "Grupo F", started: false, finished: false },
-        { equipoA: "Países Bajos", equipoB: "Suecia", banderaA: "🇳🇱", banderaB: "🇸🇪", fechaHora: new Date("2026-06-20T14:00:00"), ronda: "Grupo F", started: false, finished: false },
-        { equipoA: "Túnez", equipoB: "Japón", banderaA: "🇹🇳", banderaB: "🇯🇵", fechaHora: new Date("2026-06-21T01:00:00"), ronda: "Grupo F", started: false, finished: false },
-        { equipoA: "Túnez", equipoB: "Países Bajos", banderaA: "🇹🇳", banderaB: "🇳🇱", fechaHora: new Date("2026-06-25T20:00:00"), ronda: "Grupo F", started: false, finished: false },
-        { equipoA: "Japón", equipoB: "Suecia", banderaA: "🇯🇵", banderaB: "🇸🇪", fechaHora: new Date("2026-06-25T20:00:00"), ronda: "Grupo F", started: false, finished: false },
+-- GRUPO G
+('Bélgica', 'Egipto', '🇧🇪', '🇪🇬', '2026-06-15 16:00:00', 'Grupo G', false, false),
+('Irán', 'Nueva Zelanda', '🇮🇷', '🇳🇿', '2026-06-15 22:00:00', 'Grupo G', false, false),
+('Bélgica', 'Irán', '🇧🇪', '🇮🇷', '2026-06-21 16:00:00', 'Grupo G', false, false),
+('Nueva Zelanda', 'Egipto', '🇳🇿', '🇪🇬', '2026-06-21 22:00:00', 'Grupo G', false, false),
+('Nueva Zelanda', 'Bélgica', '🇳🇿', '🇧🇪', '2026-06-27 00:00:00', 'Grupo G', false, false),
+('Egipto', 'Irán', '🇪🇬', '🇮🇷', '2026-06-27 00:00:00', 'Grupo G', false, false),
 
-        // --- GRUPO G ---
-        { equipoA: "Bélgica", equipoB: "Egipto", banderaA: "🇧🇪", banderaB: "🇪🇬", fechaHora: new Date("2026-06-15T16:00:00"), ronda: "Grupo G", started: false, finished: false },
-        { equipoA: "Irán", equipoB: "Nueva Zelanda", banderaA: "🇮🇷", banderaB: "🇳🇿", fechaHora: new Date("2026-06-15T22:00:00"), ronda: "Grupo G", started: false, finished: false },
-        { equipoA: "Bélgica", equipoB: "Irán", banderaA: "🇧🇪", banderaB: "🇮🇷", fechaHora: new Date("2026-06-21T16:00:00"), ronda: "Grupo G", started: false, finished: false },
-        { equipoA: "Nueva Zelanda", equipoB: "Egipto", banderaA: "🇳🇿", banderaB: "🇪🇬", fechaHora: new Date("2026-06-21T22:00:00"), ronda: "Grupo G", started: false, finished: false },
-        { equipoA: "Nueva Zelanda", equipoB: "Bélgica", banderaA: "🇳🇿", banderaB: "🇧🇪", fechaHora: new Date("2026-06-27T00:00:00"), ronda: "Grupo G", started: false, finished: false },
-        { equipoA: "Egipto", equipoB: "Irán", banderaA: "🇪🇬", banderaB: "🇮🇷", fechaHora: new Date("2026-06-27T00:00:00"), ronda: "Grupo G", started: false, finished: false },
+-- GRUPO H
+('España', 'Cabo Verde', '🇪🇸', '🇨🇻', '2026-06-15 13:00:00', 'Grupo H', false, false),
+('Arabia Saudita', 'Uruguay', '🇸🇦', '🇺🇾', '2026-06-15 19:00:00', 'Grupo H', false, false),
+('España', 'Arabia Saudita', '🇪🇸', '🇸🇦', '2026-06-21 13:00:00', 'Grupo H', false, false),
+('Uruguay', 'Cabo Verde', '🇺🇾', '🇨🇻', '2026-06-21 19:00:00', 'Grupo H', false, false),
+('Cabo Verde', 'Arabia Saudita', '🇨🇻', '🇸🇦', '2026-06-26 21:00:00', 'Grupo H', false, false),
+('Uruguay', 'España', '🇺🇾', '🇪🇸', '2026-06-26 21:00:00', 'Grupo H', false, false),
 
-        // --- GRUPO H ---
-        { equipoA: "España", equipoB: "Cabo Verde", banderaA: "🇪🇸", banderaB: "🇨🇻", fechaHora: new Date("2026-06-15T13:00:00"), ronda: "Grupo H", started: false, finished: false },
-        { equipoA: "Arabia Saudita", equipoB: "Uruguay", banderaA: "🇸🇦", banderaB: "🇺🇾", fechaHora: new Date("2026-06-15T19:00:00"), ronda: "Grupo H", started: false, finished: false },
-        { equipoA: "España", equipoB: "Arabia Saudita", banderaA: "🇪🇸", banderaB: "🇸🇦", fechaHora: new Date("2026-06-21T13:00:00"), ronda: "Grupo H", started: false, finished: false },
-        { equipoA: "Uruguay", equipoB: "Cabo Verde", banderaA: "🇺🇾", banderaB: "🇨🇻", fechaHora: new Date("2026-06-21T19:00:00"), ronda: "Grupo H", started: false, finished: false },
-        { equipoA: "Cabo Verde", equipoB: "Arabia Saudita", banderaA: "🇨🇻", banderaB: "🇸🇦", fechaHora: new Date("2026-06-26T21:00:00"), ronda: "Grupo H", started: false, finished: false },
-        { equipoA: "Uruguay", equipoB: "España", banderaA: "🇺🇾", banderaB: "🇪🇸", fechaHora: new Date("2026-06-26T21:00:00"), ronda: "Grupo H", started: false, finished: false },
+-- GRUPO I
+('Francia', 'Senegal', '🇫🇷', '🇸🇳', '2026-06-16 16:00:00', 'Grupo I', false, false),
+('Irak', 'Noruega', '🇮逃', '🇳🇴', '2026-06-16 19:00:00', 'Grupo I', false, false),
+('Francia', 'Irak', '🇫🇷', '🇮逃', '2026-06-22 18:00:00', 'Grupo I', false, false),
+('Noruega', 'Senegal', '🇳🇴', '🇸🇳', '2026-06-22 21:00:00', 'Grupo I', false, false),
+('Noruega', 'Francia', '🇳🇴', '🇫🇷', '2026-06-26 16:00:00', 'Grupo I', false, false),
+('Senegal', 'Irak', '🇸🇳', '🇮逃', '2026-06-26 16:00:00', 'Grupo I', false, false),
 
-        // --- GRUPO I ---
-        { equipoA: "Francia", equipoB: "Senegal", banderaA: "🇫🇷", banderaB: "🇸🇳", fechaHora: new Date("2026-06-16T16:00:00"), ronda: "Grupo I", started: false, finished: false },
-        { equipoA: "Irak", equipoB: "Noruega", banderaA: "🇮逃", banderaB: "🇳🇴", fechaHora: new Date("2026-06-16T19:00:00"), ronda: "Grupo I", started: false, finished: false },
-        { equipoA: "Francia", equipoB: "Irak", banderaA: "🇫🇷", banderaB: "🇮逃", fechaHora: new Date("2026-06-22T18:00:00"), ronda: "Grupo I", started: false, finished: false },
-        { equipoA: "Noruega", equipoB: "Senegal", banderaA: "🇳🇴", banderaB: "🇸🇳", fechaHora: new Date("2026-06-22T21:00:00"), ronda: "Grupo I", started: false, finished: false },
-        { equipoA: "Noruega", equipoB: "Francia", banderaA: "🇳🇴", banderaB: "🇫🇷", fechaHora: new Date("2026-06-26T16:00:00"), ronda: "Grupo I", started: false, finished: false },
-        { equipoA: "Senegal", equipoB: "Irak", banderaA: "🇸🇳", banderaB: "🇮逃", fechaHora: new Date("2026-06-26T16:00:00"), ronda: "Grupo I", started: false, finished: false },
+-- GRUPO J
+('Argentina', 'Argelia', '🇦🇷', '🇩🇿', '2026-06-16 22:00:00', 'Grupo J', false, false),
+('Austria', 'Jordania', '🇦🇹', '🇯🇴', '2026-06-17 01:00:00', 'Grupo J', false, false),
+('Argentina', 'Austria', '🇦🇷', '🇦🇹', '2026-06-22 14:00:00', 'Grupo J', false, false),
+('Jordania', 'Argelia', '🇯🇴', '🇩🇿', '2026-06-23 00:00:00', 'Grupo J', false, false),
+('Argelia', 'Austria', '🇩🇿', '🇦🇹', '2026-06-27 23:00:00', 'Grupo J', false, false),
+('Jordania', 'Argentina', '🇯🇴', '🇦🇷', '2026-06-27 23:00:00', 'Grupo J', false, false),
 
-        // --- GRUPO J ---
-        { equipoA: "Argentina", equipoB: "Argelia", banderaA: "🇦🇷", banderaB: "🇩🇿", fechaHora: new Date("2026-06-16T22:00:00"), ronda: "Grupo J", started: false, finished: false },
-        { equipoA: "Austria", equipoB: "Jordania", banderaA: "🇦🇹", banderaB: "🇯🇴", fechaHora: new Date("2026-06-17T01:00:00"), ronda: "Grupo J", started: false, finished: false },
-        { equipoA: "Argentina", equipoB: "Austria", banderaA: "🇦🇷", banderaB: "🇦🇹", fechaHora: new Date("2026-06-22T14:00:00"), ronda: "Grupo J", started: false, finished: false },
-        { equipoA: "Jordania", equipoB: "Argelia", banderaA: "🇯🇴", banderaB: "🇩🇿", fechaHora: new Date("2026-06-23T00:00:00"), ronda: "Grupo J", started: false, finished: false },
-        { equipoA: "Argelia", equipoB: "Austria", banderaA: "🇩🇿", banderaB: "🇦🇹", fechaHora: new Date("2026-06-27T23:00:00"), ronda: "Grupo J", started: false, finished: false },
-        { equipoA: "Jordania", equipoB: "Argentina", banderaA: "🇯🇴", banderaB: "🇦🇷", fechaHora: new Date("2026-06-27T23:00:00"), ronda: "Grupo J", started: false, finished: false },
+-- GRUPO K
+('Portugal', 'RD Congo', '🇵🇹', '🇨🇩', '2026-06-17 14:00:00', 'Grupo K', false, false),
+('Uzbekistán', 'Colombia', '🇺🇿', '🇨🇴', '2026-06-17 23:00:00', 'Grupo K', false, false),
+('Portugal', 'Uzbekistán', '🇵🇹', '🇺🇿', '2026-06-23 14:00:00', 'Grupo K', false, false),
+('Colombia', 'RD Congo', '🇨🇴', '🇨🇩', '2026-06-23 23:00:00', 'Grupo K', false, false),
+('Colombia', 'Portugal', '🇨🇴', '🇵🇹', '2026-06-27 20:30:00', 'Grupo K', false, false),
+('RD Congo', 'Uzbekistán', '🇨🇩', '🇺🇿', '2026-06-27 20:30:00', 'Grupo K', false, false),
 
-        // --- GRUPO K ---
-        { equipoA: "Portugal", equipoB: "RD Congo", banderaA: "🇵🇹", banderaB: "🇨🇩", fechaHora: new Date("2026-06-17T14:00:00"), ronda: "Grupo K", started: false, finished: false },
-        { equipoA: "Uzbekistán", equipoB: "Colombia", banderaA: "🇺🇿", banderaB: "🇨🇴", fechaHora: new Date("2026-06-17T23:00:00"), ronda: "Grupo K", started: false, finished: false },
-        { equipoA: "Portugal", equipoB: "Uzbekistán", banderaA: "🇵🇹", banderaB: "🇺🇿", fechaHora: new Date("2026-06-23T14:00:00"), ronda: "Grupo K", started: false, finished: false },
-        { equipoA: "Colombia", equipoB: "RD Congo", banderaA: "🇨🇴", banderaB: "🇨🇩", fechaHora: new Date("2026-06-23T23:00:00"), ronda: "Grupo K", started: false, finished: false },
-        { equipoA: "Colombia", equipoB: "Portugal", banderaA: "🇨🇴", banderaB: "🇵🇹", fechaHora: new Date("2026-06-27T20:30:00"), ronda: "Grupo K", started: false, finished: false },
-        { equipoA: "RD Congo", equipoB: "Uzbekistán", banderaA: "🇨🇩", banderaB: "🇺🇿", fechaHora: new Date("2026-06-27T20:30:00"), ronda: "Grupo K", started: false, finished: false },
+-- GRUPO L
+('Inglaterra', 'Croacia', '🏴󠁧󠁢󠁥󠁮󠁧󠁿', '🇭🇷', '2026-06-17 17:00:00', 'Grupo L', false, false),
+('Ghana', 'Panamá', '🇬🇭', '🇵🇦', '2026-06-17 20:00:00', 'Grupo L', false, false),
+('Inglaterra', 'Ghana', '🏴󠁧󠁢󠁥󠁮󠁧󠁿', '🇬🇭', '2026-06-23 17:00:00', 'Grupo L', false, false),
+('Panamá', 'Croacia', '🇵🇦', '🇭🇷', '2026-06-23 20:00:00', 'Grupo L', false, false),
+('Panamá', 'Inglaterra', '🇵🇦', '🏴󠁧󠁢󠁥󠁮󠁧󠁿', '2026-06-27 18:00:00', 'Grupo L', false, false),
+('Croacia', 'Ghana', '🇭🇷', '🇬🇭', '2026-06-27 18:00:00', 'Grupo L', false, false),
 
-        // --- GRUPO L ---
-        { equipoA: "Inglaterra", equipoB: "Croacia", banderaA: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", banderaB: "🇭🇷", fechaHora: new Date("2026-06-17T17:00:00"), ronda: "Grupo L", started: false, finished: false },
-        { equipoA: "Ghana", equipoB: "Panamá", banderaA: "🇬🇭", banderaB: "🇵🇦", fechaHora: new Date("2026-06-17T20:00:00"), ronda: "Grupo L", started: false, finished: false },
-        { equipoA: "Inglaterra", equipoB: "Ghana", banderaA: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", banderaB: "🇬🇭", fechaHora: new Date("2026-06-23T17:00:00"), ronda: "Grupo L", started: false, finished: false },
-        { equipoA: "Panamá", equipoB: "Croacia", banderaA: "🇵🇦", banderaB: "🇭🇷", fechaHora: new Date("2026-06-23T20:00:00"), ronda: "Grupo L", started: false, finished: false },
-        { equipoA: "Panamá", equipoB: "Inglaterra", banderaA: "🇵🇦", banderaB: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", fechaHora: new Date("2026-06-27T18:00:00"), ronda: "Grupo L", started: false, finished: false },
-        { equipoA: "Croacia", equipoB: "Ghana", banderaA: "🇭🇷", banderaB: "🇬🇭", fechaHora: new Date("2026-06-27T18:00:00"), ronda: "Grupo L", started: false, finished: false },
+-- ELIMINATORIA DE 32 (16 partidos)
+('A definir', 'A definir', '⚽', '⚽', '2026-06-28 16:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-06-29 14:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-06-29 17:30:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-06-29 22:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-06-30 14:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-06-30 18:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-06-30 22:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-07-01 13:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-07-01 17:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-07-01 21:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-07-02 16:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-07-02 20:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-07-03 00:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-07-03 15:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-07-03 19:00:00', 'Eliminatoria de 32', false, false),
+('A definir', 'A definir', '⚽', '⚽', '2026-07-03 22:30:00', 'Eliminatoria de 32', false, false),
 
-        // --- ELIMINATORIA DE 32 (16 partidos, equipos "A definir") ---
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-06-28T16:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-06-29T14:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-06-29T17:30:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-06-29T22:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-06-30T14:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-06-30T18:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-06-30T22:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-07-01T13:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-07-01T17:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-07-01T21:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-07-02T16:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-07-02T20:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-07-03T00:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-07-03T15:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-07-03T19:00:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚽", banderaB: "⚽", fechaHora: new Date("2026-07-03T22:30:00"), ronda: "Eliminatoria de 32", started: false, finished: false },
+-- OCTAVOS DE FINAL (8 partidos)
+('A definir', 'A definir', '🔥', '🔥', '2026-07-04 14:00:00', 'Octavos de Final', false, false),
+('A definir', 'A definir', '🔥', '🔥', '2026-07-04 18:00:00', 'Octavos de Final', false, false),
+('A definir', 'A definir', '🔥', '🔥', '2026-07-05 17:00:00', 'Octavos de Final', false, false),
+('A definir', 'A definir', '🔥', '🔥', '2026-07-05 21:00:00', 'Octavos de Final', false, false),
+('A definir', 'A definir', '🔥', '🔥', '2026-07-06 16:00:00', 'Octavos de Final', false, false),
+('A definir', 'A definir', '🔥', '🔥', '2026-07-06 21:00:00', 'Octavos de Final', false, false),
+('A definir', 'A definir', '🔥', '🔥', '2026-07-07 13:00:00', 'Octavos de Final', false, false),
+('A definir', 'A definir', '🔥', '🔥', '2026-07-07 17:00:00', 'Octavos de Final', false, false),
 
-        // --- OCTAVOS DE FINAL (8 partidos, equipos "A definir") ---
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "🔥", banderaB: "🔥", fechaHora: new Date("2026-07-04T14:00:00"), ronda: "Octavos de Final", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "🔥", banderaB: "🔥", fechaHora: new Date("2026-07-04T18:00:00"), ronda: "Octavos de Final", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "🔥", banderaB: "🔥", fechaHora: new Date("2026-07-05T17:00:00"), ronda: "Octavos de Final", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "🔥", banderaB: "🔥", fechaHora: new Date("2026-07-05T21:00:00"), ronda: "Octavos de Final", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "🔥", banderaB: "🔥", fechaHora: new Date("2026-07-06T16:00:00"), ronda: "Octavos de Final", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "🔥", banderaB: "🔥", fechaHora: new Date("2026-07-06T21:00:00"), ronda: "Octavos de Final", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "🔥", banderaB: "🔥", fechaHora: new Date("2026-07-07T13:00:00"), ronda: "Octavos de Final", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "🔥", banderaB: "🔥", fechaHora: new Date("2026-07-07T17:00:00"), ronda: "Octavos de Final", started: false, finished: false },
+-- CUARTOS DE FINAL (4 partidos)
+('A definir', 'A definir', '⭐', '⭐', '2026-07-09 17:00:00', 'Cuartos de Final', false, false),
+('A definir', 'A definir', '⭐', '⭐', '2026-07-09 21:00:00', 'Cuartos de Final', false, false),
+('A definir', 'A definir', '⭐', '⭐', '2026-07-10 17:00:00', 'Cuartos de Final', false, false),
+('A definir', 'A definir', '⭐', '⭐', '2026-07-10 21:00:00', 'Cuartos de Final', false, false),
 
-        // --- CUARTOS DE FINAL (4 partidos, equipos "A definir") ---
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⭐", banderaB: "⭐", fechaHora: new Date("2026-07-09T17:00:00"), ronda: "Cuartos de Final", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⭐", banderaB: "⭐", fechaHora: new Date("2026-07-09T21:00:00"), ronda: "Cuartos de Final", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A-definir", banderaA: "⭐", banderaB: "⭐", fechaHora: new Date("2026-07-10T17:00:00"), ronda: "Cuartos de Final", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⭐", banderaB: "⭐", fechaHora: new Date("2026-07-10T21:00:00"), ronda: "Cuartos de Final", started: false, finished: false },
+-- SEMIFINALES (2 partidos)
+('A definir', 'A definir', '⚡', '⚡', '2026-07-14 19:00:00', 'Semifinal', false, false),
+('A definir', 'A definir', '⚡', '⚡', '2026-07-15 19:00:00', 'Semifinal', false, false),
 
-        // --- SEMIFINALES (2 partidos, equipos "A definir") ---
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚡", banderaB: "⚡", fechaHora: new Date("2026-07-14T19:00:00"), ronda: "Semifinal", started: false, finished: false },
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "⚡", banderaB: "⚡", fechaHora: new Date("2026-07-15T19:00:00"), ronda: "Semifinal", started: false, finished: false },
+-- TERCER PUESTO (1 partido)
+('A definir', 'A definir', '🥉', '🥉', '2026-07-18 16:00:00', 'Tercer Puesto', false, false),
 
-        // --- TERCER PUESTO (1 partido, equipos "A definir") ---
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "🥉", banderaB: "🥉", fechaHora: new Date("2026-07-18T16:00:00"), ronda: "Tercer Puesto", started: false, finished: false },
-
-        // --- FINAL (1 partido, equipos "A definir") ---
-        { equipoA: "A definir", equipoB: "A definir", banderaA: "🏆", banderaB: "🏆", fechaHora: new Date("2026-07-19T16:00:00"), ronda: "Final", started: false, finished: false },
-      ]);
-      console.log("¡Fixture completo del Mundial 2026 (104 partidos) sembrado exitosamente en Neon!");
-    }
-
-    // 2. ASEGURAR USUARIOS BÁSICOS DE ACCESO
-    const usersCount = await db.select({ value: count() }).from(users);
-    if (usersCount[0].value === 0) {
-      await db.insert(users).values([
-        {
-          nombre: "Admin Kanthus",
-          telefono: "091899265",
-          instagram: "@kanthus.smash",
-          email: "admin@kanthus.com",
-          password: "admin",
-          isAdmin: true,
-          puntos: 0,
-          exactos: 0,
-          jugados: 0,
-        },
-        {
-          nombre: "Juan Perez (Demo)",
-          telefono: "099888777",
-          instagram: "@juanperez_futbol",
-          email: "juan@perez.com",
-          password: "123",
-          isAdmin: false,
-          puntos: 5,
-          exactos: 1,
-          jugados: 1,
-        },
-      ]);
-    }
-  } catch (err) {
-    console.error("Aviso en ensureSeedData (Neon):", err);
-  }
-}
+-- FINAL (1 partido)
+('A definir', 'A definir', '🏆', '🏆', '2026-07-19 16:00:00', 'Final', false, false);
